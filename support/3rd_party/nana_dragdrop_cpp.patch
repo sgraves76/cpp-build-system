@@ -1,0 +1,19 @@
+*** source/gui/dragdrop.cpp	2020-05-16 17:08:50.000000000 -0500
+--- source/gui/dragdrop.cpp.new	2024-08-25 19:15:58.989072229 -0500
+***************
+*** 25,31 ****
+  #	include <windows.h>
+  #	include <oleidl.h>
+  #	include <comdef.h>
+! #	include <Shlobj.h>
+  #elif defined(NANA_X11)
+  #	include "../detail/posix/xdnd_protocol.hpp"
+  #	include <nana/gui/detail/native_window_interface.hpp>
+--- 25,31 ----
+  #	include <windows.h>
+  #	include <oleidl.h>
+  #	include <comdef.h>
+! #	include <shlobj.h>
+  #elif defined(NANA_X11)
+  #	include "../detail/posix/xdnd_protocol.hpp"
+  #	include <nana/gui/detail/native_window_interface.hpp>

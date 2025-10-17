@@ -1,0 +1,146 @@
+#!/usr/bin/env bash
+
+PROJECT_LIBRARIES=(
+  BACKWARD_CPP
+  BOOST
+  CLI11
+  CPP_HTTPLIB
+  CURL
+  CXXOPTS
+  DTL
+  FLAC
+  FMT
+  FONTCONFIG
+  FREETYPE2
+  FUSE
+  FZF
+  GTKMM
+  JSON
+  LIBBITCOIN_SYSTEM
+  LIBDSM
+  LIBEVENT
+  LIBICONV
+  LIBJPEG_TURBO
+  LIBPNG
+  LIBSODIUM
+  LIBTASN
+  NANA
+  NUSPELL
+  OGG
+  OPENAL
+  OPENSSL
+  PUGIXML
+  ROCKSDB
+  SAGO_PLATFORM_FOLDERS
+  SDL
+  SECP256K1
+  SFML
+  SPDLOG
+  SQLITE
+  STDUUID
+  TESTING
+  TPL
+  VLC
+  VORBIS
+  WINFSP
+  WXWIDGETS
+)
+
+declare -A PROJECT_CLEANUP
+PROJECT_CLEANUP[BACKWARD_CPP]="include/backward.hpp:src/backward.cpp"
+PROJECT_CLEANUP[BINUTILS]="3rd_party/mingw64/binutils-*"
+PROJECT_CLEANUP[BOOST]="3rd_party/boost_*"
+PROJECT_CLEANUP[CLI11]="3rd_party/CLI11-*"
+PROJECT_CLEANUP[CPP_HTTPLIB]="3rd_party/cpp-httplib-*"
+PROJECT_CLEANUP[CURL]="3rd_party/curl-*"
+PROJECT_CLEANUP[CXXOPTS]="3rd_party/cxxopts-*"
+PROJECT_CLEANUP[DTL]="3rd_party/dtl-*"
+PROJECT_CLEANUP[EXPAT]="3rd_party/mingw64/expat-*"
+PROJECT_CLEANUP[FLAC]="3rd_party/flac-*"
+PROJECT_CLEANUP[FMT]="3rd_party/fmt-*"
+PROJECT_CLEANUP[FONTCONFIG]="3rd_party/fontconfig-*"
+PROJECT_CLEANUP[FREETYPE2]="3rd_party/freetype-*"
+PROJECT_CLEANUP[FZF]="include/fzf.h:src/fzf.c"
+PROJECT_CLEANUP[GCC]="3rd_party/mingw64/gcc-*"
+PROJECT_CLEANUP[ICU]="3rd_party/mingw64/icu-release-*"
+PROJECT_CLEANUP[JSON]="3rd_party/json-*"
+PROJECT_CLEANUP[INNOSETUP]="3rd_party/mingw64/innosetup-*"
+PROJECT_CLEANUP[LIBBITCOIN_SYSTEM]="3rd_party/boost_${PROJECT_VERSIONS[BOOST2_MAJOR]}_${PROJECT_VERSIONS[BOOST2_MINOR]}_*:3rd_party/libbitcoin-system-*"
+PROJECT_CLEANUP[LIBBITCOIN_SYSTEM_ON]="3rd_party/boost_${PROJECT_VERSIONS[BOOST_MAJOR]}_${PROJECT_VERSIONS[BOOST_MINOR]}_*"
+PROJECT_CLEANUP[LIBDSM]="3rd_party/libdsm-*:3rd_party/libdsm*"
+PROJECT_CLEANUP[LIBEVENT]="3rd_party/libevent*"
+PROJECT_CLEANUP[LIBICONV]="3rd_party/libiconv-*"
+PROJECT_CLEANUP[LIBJPEG_TURBO]="3rd_party/libjpeg_turbo-*"
+PROJECT_CLEANUP[LIBPNG]="3rd_party/libpng-*"
+PROJECT_CLEANUP[LIBSODIUM]="3rd_party/libsodium-*:3rd_party/libsodium*"
+PROJECT_CLEANUP[LIBTASN]="3rd_party/libtasn1-*"
+PROJECT_CLEANUP[MINGW]="3rd_party/mingw64/mingw-w64-*"
+PROJECT_CLEANUP[NANA]="3rd_party/nana-*:3rd_party/nana*"
+PROJECT_CLEANUP[NUSPELL]="3rd_party/nuspell-*"
+PROJECT_CLEANUP[OGG]="3rd_party/ogg-*"
+PROJECT_CLEANUP[OPENAL]="3rd_party/openal-*"
+PROJECT_CLEANUP[OPENSSL]="3rd_party/openssl-*"
+PROJECT_CLEANUP[PKG_CONFIG]="3rd_party/mingw64/pkg-config-*"
+PROJECT_CLEANUP[PUGIXML]="3rd_party/pugixml-*"
+PROJECT_CLEANUP[ROCKSDB]="3rd_party/rocksdb-*"
+PROJECT_CLEANUP[SAGO_PLATFORM_FOLDERS]="include/platform_folders.hpp:src/platform_folders.cpp"
+PROJECT_CLEANUP[SDL]="3rd_party/sdl-*"
+PROJECT_CLEANUP[SECP256K1]="3rd_party/secp256k1-*"
+PROJECT_CLEANUP[SFML]="3rd_party/SFML-*:3rd_party/SFML*:include/RoundedRectangleShape.hpp:include/Text2.hpp:src/RoundedRectangleShape.cpp:src/Text2.cpp"
+PROJECT_CLEANUP[SPDLOG]="3rd_party/spdlog-*"
+PROJECT_CLEANUP[SQLITE]="3rd_party/sqlite*"
+PROJECT_CLEANUP[STDUUID]="3rd_party/stduuid-*"
+PROJECT_CLEANUP[TESTING]="3rd_party/googletest-*"
+PROJECT_CLEANUP[TPL]="3rd_party/tiny-process-library*"
+PROJECT_CLEANUP[VLC]="3rd_party/vlc*"
+PROJECT_CLEANUP[VORBIS]="3rd_party/vorbis-*:3rd_party/vorbis*"
+PROJECT_CLEANUP[WINFSP]="3rd_party/winfsp-*"
+PROJECT_CLEANUP[WXWIDGETS]="3rd_party/wxWidgets-*"
+PROJECT_CLEANUP[ZLIB]="3rd_party/mingw64/zlib-*"
+export PROJECT_CLEANUP
+
+declare -A PROJECT_DOWNLOADS
+PROJECT_DOWNLOADS[BINUTILS]="https://ftp.gnu.org/gnu/binutils/binutils-${PROJECT_VERSIONS[BINUTILS]}.tar.xz;binutils-${PROJECT_VERSIONS[BINUTILS]}.tar.xz;3rd_party/mingw64"
+PROJECT_DOWNLOADS[BOOST2]="https://archives.boost.io/release/${PROJECT_VERSIONS[BOOST2_MAJOR]}.${PROJECT_VERSIONS[BOOST2_MINOR]}.${PROJECT_VERSIONS[BOOST2_PATCH]}/source/boost_${PROJECT_VERSIONS[BOOST2_MAJOR]}_${PROJECT_VERSIONS[BOOST2_MINOR]}_${PROJECT_VERSIONS[BOOST2_PATCH]}.tar.gz;boost_${PROJECT_VERSIONS[BOOST2_MAJOR]}_${PROJECT_VERSIONS[BOOST2_MINOR]}_${PROJECT_VERSIONS[BOOST2_PATCH]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[BOOST]="https://archives.boost.io/release/${PROJECT_VERSIONS[BOOST_MAJOR]}.${PROJECT_VERSIONS[BOOST_MINOR]}.${PROJECT_VERSIONS[BOOST_PATCH]}/source/boost_${PROJECT_VERSIONS[BOOST_MAJOR]}_${PROJECT_VERSIONS[BOOST_MINOR]}_${PROJECT_VERSIONS[BOOST_PATCH]}.tar.gz;boost_${PROJECT_VERSIONS[BOOST_MAJOR]}_${PROJECT_VERSIONS[BOOST_MINOR]}_${PROJECT_VERSIONS[BOOST_PATCH]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[CLI11]="https://github.com/CLIUtils/CLI11/archive/refs/tags/v${PROJECT_VERSIONS[CLI11]}.tar.gz;CLI11-${PROJECT_VERSIONS[CLI11]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[CPP_HTTPLIB]="https://github.com/yhirose/cpp-httplib/archive/refs/tags/v${PROJECT_VERSIONS[CPP_HTTPLIB]}.tar.gz;cpp-httplib-${PROJECT_VERSIONS[CPP_HTTPLIB]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[CURL]="https://github.com/curl/curl/archive/refs/tags/curl-${PROJECT_VERSIONS[CURL2]}.tar.gz;curl-${PROJECT_VERSIONS[CURL]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[CXXOPTS]="https://github.com/jarro2783/cxxopts/archive/refs/tags/v${PROJECT_VERSIONS[CXXOPTS]}.tar.gz;cxxopts-v${PROJECT_VERSIONS[CXXOPTS]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[EXPAT]="https://github.com/libexpat/libexpat/archive/refs/tags/R_${PROJECT_VERSIONS[EXPAT2]}.tar.gz;expat-${PROJECT_VERSIONS[EXPAT]}.tar.gz;3rd_party/mingw64"
+PROJECT_DOWNLOADS[FLAC]="https://github.com/xiph/flac/archive/refs/tags/${PROJECT_VERSIONS[FLAC]}.tar.gz;flac-${PROJECT_VERSIONS[FLAC]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[FMT]="https://github.com/fmtlib/fmt/archive/refs/tags/${PROJECT_VERSIONS[FMT]}.tar.gz;fmt-${PROJECT_VERSIONS[FMT]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[FONTCONFIG]="https://www.freedesktop.org/software/fontconfig/release/fontconfig-${PROJECT_VERSIONS[FONTCONFIG]}.tar.xz;fontconfig-${PROJECT_VERSIONS[FONTCONFIG]}.tar.xz;3rd_party"
+PROJECT_DOWNLOADS[FREETYPE2]="https://download.savannah.gnu.org/releases/freetype/freetype-${PROJECT_VERSIONS[FREETYPE2]}.tar.gz;freetype-${PROJECT_VERSIONS[FREETYPE2]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[GCC]="https://mirrorservice.org/sites/sourceware.org/pub/gcc/releases/gcc-${PROJECT_VERSIONS[GCC]}/gcc-${PROJECT_VERSIONS[GCC]}.tar.gz;gcc-${PROJECT_VERSIONS[GCC]}.tar.gz;3rd_party/mingw64"
+PROJECT_DOWNLOADS[GTEST]="https://github.com/google/googletest/archive/refs/tags/v${PROJECT_VERSIONS[GTEST]}.tar.gz;googletest-${PROJECT_VERSIONS[GTEST]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[ICU]="https://github.com/unicode-org/icu/archive/refs/tags/release-${PROJECT_VERSIONS[ICU]}.tar.gz;icu-release-${PROJECT_VERSIONS[ICU]}.tar.gz;3rd_party/mingw64"
+PROJECT_DOWNLOADS[JSON]="https://github.com/nlohmann/json/archive/refs/tags/v${PROJECT_VERSIONS[JSON]}.tar.gz;json-${PROJECT_VERSIONS[JSON]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[INNOSETUP]="https://files.jrsoftware.org/is/6/innosetup-${PROJECT_VERSIONS[INNOSETUP]}.exe;innosetup-${PROJECT_VERSIONS[INNOSETUP]}.exe;3rd_party/mingw64"
+PROJECT_DOWNLOADS[WINFSP]="https://github.com/winfsp/winfsp/releases/download/v${PROJECT_VERSIONS[WINFSP2]}/winfsp-${PROJECT_VERSIONS[WINFSP]}.msi;winfsp-${PROJECT_VERSIONS[WINFSP]}.msi;3rd_party"
+PROJECT_DOWNLOADS[LIBDSM]="https://github.com/videolabs/libdsm/archive/refs/tags/v${PROJECT_VERSIONS[LIBDSM]}.tar.gz;libdsm-${PROJECT_VERSIONS[LIBDSM]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[LIBEVENT]="https://github.com/libevent/libevent/archive/refs/tags/release-${PROJECT_VERSIONS[LIBEVENT]}-stable.tar.gz;libevent-${PROJECT_VERSIONS[LIBEVENT]}-stable.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[LIBICONV]="https://ftp.gnu.org/pub/gnu/libiconv/libiconv-${PROJECT_VERSIONS[LIBICONV]}.tar.gz;libiconv-${PROJECT_VERSIONS[LIBICONV]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[LIBJPEG_TURBO]="https://github.com/libjpeg-turbo/libjpeg-turbo/archive/refs/tags/${PROJECT_VERSIONS[LIBJPEG_TURBO]}.tar.gz;libjpeg_turbo-${PROJECT_VERSIONS[LIBJPEG_TURBO]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[LIBPNG]="https://github.com/pnggroup/libpng/archive/refs/tags/v${PROJECT_VERSIONS[LIBPNG]}.tar.gz;libpng-v${PROJECT_VERSIONS[LIBPNG]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[LIBSODIUM]="https://github.com/jedisct1/libsodium/archive/refs/tags/${PROJECT_VERSIONS[LIBSODIUM]}-RELEASE.tar.gz;libsodium-${PROJECT_VERSIONS[LIBSODIUM]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[LIBTASN]="https://ftp.gnu.org/gnu/libtasn1/libtasn1-${PROJECT_VERSIONS[LIBTASN]}.tar.gz;libtasn1-${PROJECT_VERSIONS[LIBTASN]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[MINGW]="https://sourceforge.net/projects/mingw-w64/files/mingw-w64/mingw-w64-release/mingw-w64-v${PROJECT_VERSIONS[MINGW]}.tar.bz2;;mingw-w64-v${PROJECT_VERSIONS[MINGW]}.tar.bz2;3rd_party/mingw64"
+PROJECT_DOWNLOADS[NANA]="https://github.com/cnjinhao/nana/archive/refs/tags/v${PROJECT_VERSIONS[NANA]}.tar.gz;nana-v${PROJECT_VERSIONS[NANA]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[NUSPELL]="https://github.com/nuspell/nuspell/archive/refs/tags/v${PROJECT_VERSIONS[NUSPELL]}.tar.gz;nuspell-v${PROJECT_VERSIONS[NUSPELL]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[OGG]="https://github.com/xiph/ogg/releases/download/v${PROJECT_VERSIONS[OGG]}/libogg-${PROJECT_VERSIONS[OGG]}.tar.gz;ogg-v${PROJECT_VERSIONS[OGG]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[OPENAL]="https://github.com/kcat/openal-soft/archive/refs/tags/${PROJECT_VERSIONS[OPENAL]}.tar.gz;openal-${PROJECT_VERSIONS[OPENAL]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[OPENSSL]="https://github.com/openssl/openssl/releases/download/openssl-${PROJECT_VERSIONS[OPENSSL]}/openssl-${PROJECT_VERSIONS[OPENSSL]}.tar.gz;openssl-${PROJECT_VERSIONS[OPENSSL]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[PKG_CONFIG]="https://pkgconfig.freedesktop.org/releases/pkg-config-${PROJECT_VERSIONS[PKG_CONFIG]}.tar.gz;pkg-config-${PROJECT_VERSIONS[PKG_CONFIG]}.tar.gz;3rd_party/mingw64"
+PROJECT_DOWNLOADS[PUGIXML]="https://github.com/zeux/pugixml/releases/download/v${PROJECT_VERSIONS[PUGIXML]}/pugixml-${PROJECT_VERSIONS[PUGIXML]}.tar.gz;pugixml-${PROJECT_VERSIONS[PUGIXML]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[ROCKSDB]="https://github.com/facebook/rocksdb/archive/refs/tags/v${PROJECT_VERSIONS[ROCKSDB]}.tar.gz;rocksdb-${PROJECT_VERSIONS[ROCKSDB]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[SDL]="https://github.com/libsdl-org/SDL/archive/refs/tags/release-${PROJECT_VERSIONS[SDL]}.tar.gz;sdl-${PROJECT_VERSIONS[SDL]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[SECP256K1]="https://github.com/libbitcoin/secp256k1/archive/refs/tags/v${PROJECT_VERSIONS[SECP256K1]}.tar.gz;secp256k1-${PROJECT_VERSIONS[SECP256K1]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[SFML]="https://github.com/SFML/SFML/archive/refs/tags/${PROJECT_VERSIONS[SFML]}.tar.gz;SFML-${PROJECT_VERSIONS[SFML]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[SPDLOG]="https://github.com/gabime/spdlog/archive/refs/tags/v${PROJECT_VERSIONS[SPDLOG]}.tar.gz;spdlog-${PROJECT_VERSIONS[SPDLOG]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[SQLITE]="https://www.sqlite.org/2025/sqlite-amalgamation-${PROJECT_VERSIONS[SQLITE]}.zip;sqlite-amalgamation-${PROJECT_VERSIONS[SQLITE]}.zip;3rd_party"
+PROJECT_DOWNLOADS[STDUUID]="https://github.com/mariusbancila/stduuid/archive/refs/tags/v${PROJECT_VERSIONS[STDUUID]}.tar.gz;stduuid-${PROJECT_VERSIONS[STDUUID]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[VORBIS]="https://github.com/xiph/vorbis/archive/refs/tags/v${PROJECT_VERSIONS[VORBIS]}.tar.gz;vorbis-v${PROJECT_VERSIONS[VORBIS]}.tar.gz;3rd_party"
+PROJECT_DOWNLOADS[WXWIDGETS]="https://github.com/wxWidgets/wxWidgets/releases/download/v${PROJECT_VERSIONS[WXWIDGETS]}/wxWidgets-${PROJECT_VERSIONS[WXWIDGETS]}.tar.bz2;wxWidgets-${PROJECT_VERSIONS[WXWIDGETS]}.tar.bz2;3rd_party"
+PROJECT_DOWNLOADS[ZLIB]="https://github.com/madler/zlib/archive/refs/tags/v${PROJECT_VERSIONS[ZLIB]}.tar.gz;zlib-${PROJECT_VERSIONS[ZLIB]}.tar.gz;3rd_party/mingw64"
+export PROJECT_DOWNLOADS

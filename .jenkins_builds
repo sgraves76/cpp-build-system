@@ -1,0 +1,181 @@
+#!groovy
+
+pipeline {
+  agent none
+
+  environment {
+    PROJECT_TEST_CONFIG_DIR = "/.ci/cpp_build_system/test"
+  }
+
+  options {
+    disableConcurrentBuilds()
+    skipDefaultCheckout()
+    timestamps()
+  }
+
+  stages {
+    stage('Windows') {
+      agent any
+      stages {
+        stage('Checkout') {
+          steps {
+            script {
+              int maxAttempts = 6
+              int baseDelay = 10
+              for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+                try {
+                  checkout scm
+                  break
+                } catch (err) {
+                  if (attempt == maxAttempts) { throw err }
+                  int waitSec = baseDelay * (1 << (attempt - 1))
+                  echo "Checkout failed (attempt ${attempt}/${maxAttempts}). Waiting ${waitSec}s before retry..."
+                  sleep time: waitSec, unit: 'SECONDS'
+                }
+              }
+            }
+          }
+        }
+
+        stage('win32_shared') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_win32.sh shared' } } }
+        }
+        stage('win32_shared_crypto') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_win32.sh shared 1' } } }
+        }
+        stage('win32_shared_crypto_no_boost') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_win32.sh shared 7' } } }
+        }
+        stage('win32_shared_dsm') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_win32.sh shared 2' } } }
+        }
+        stage('win32_shared_sqlite') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_win32.sh shared 3' } } }
+        }
+        stage('win32_shared_errors_v1') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_win32.sh shared 4' } } }
+        }
+        stage('win32_shared_fmt') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_win32.sh shared 5' } } }
+        }
+        stage('win32_shared_libevent') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_win32.sh shared 6' } } }
+        }
+
+        stage('win32_static') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_win32.sh static' } } }
+        }
+        stage('win32_static_crypto') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_win32.sh static 1' } } }
+        }
+        stage('win32_static_crypto_no_boost') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_win32.sh static 7' } } }
+        }
+        stage('win32_static_dsm') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_win32.sh static 2' } } }
+        }
+        stage('win32_static_sqlite') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_win32.sh static 3' } } }
+        }
+        stage('win32_static_errors_v1') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_win32.sh static 4' } } }
+        }
+        stage('win32_static_fmt') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_win32.sh static 5' } } }
+        }
+        stage('win32_static_libevent') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_win32.sh static 6' } } }
+        }
+      }
+    }
+
+    stage('Linux') {
+      agent any
+      stages {
+        stage('Checkout') {
+          steps {
+            script {
+              int maxAttempts = 6
+              int baseDelay = 10
+              for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+                try {
+                  checkout scm
+                  break
+                } catch (err) {
+                  if (attempt == maxAttempts) { throw err }
+                  int waitSec = baseDelay * (1 << (attempt - 1))
+                  echo "Checkout failed (attempt ${attempt}/${maxAttempts}). Waiting ${waitSec}s before retry..."
+                  sleep time: waitSec, unit: 'SECONDS'
+                }
+              }
+            }
+          }
+        }
+
+        stage('linux_shared') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared' } } }
+        }
+        stage('linux_shared_crypto') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared 1' } } }
+        }
+        stage('linux_shared_crypto_no_boost') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared 7' } } }
+        }
+        stage('linux_shared_dsm') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared 2' } } }
+        }
+        stage('linux_shared_sqlite') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared 3' } } }
+        }
+        stage('linux_shared_errors_v1') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared 4' } } }
+        }
+        stage('linux_shared_fmt') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared 5' } } }
+        }
+        stage('linux_shared_libevent') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared 6' } } }
+        }
+
+        stage('linux_static') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static' } } }
+        }
+        stage('linux_static_crypto') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static 1' } } }
+        }
+        stage('linux_static_crypto_no_boost') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static 7' } } }
+        }
+        stage('linux_static_dsm') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static 2' } } }
+        }
+        stage('linux_static_sqlite') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static 3' } } }
+        }
+        stage('linux_static_errors_v1') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static 4' } } }
+        }
+        stage('linux_static_fmt') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static 5' } } }
+        }
+        stage('linux_static_libevent') {
+          steps { script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static 6' } } }
+        }
+      }
+    }
+  }
+}
+
+def retryWithBackoff(int maxAttempts, int baseDelaySeconds, Closure body) {
+  for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      body()
+      return
+    } catch (err) {
+      if (attempt == maxAttempts) { throw err }
+      int waitSec = baseDelaySeconds * (1 << (attempt - 1))
+      echo "Step failed (attempt ${attempt}/${maxAttempts}). Waiting ${waitSec}s before retry..."
+      sleep time: waitSec, unit: 'SECONDS'
+    }
+  }
+}

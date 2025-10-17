@@ -1,0 +1,243 @@
+#!groovy
+pipeline {
+  agent none
+
+  environment {
+    PROJECT_TEST_CONFIG_DIR = "${env.HOME}/.ci/cpp_build_system/test"
+  }
+
+  options {
+    disableConcurrentBuilds()
+    skipDefaultCheckout()
+    timestamps()
+  }
+
+  stages {
+    stage('macOS arm64') {
+      agent any
+      stages {
+        stage('Checkout') {
+          steps {
+            script {
+              int maxAttempts = 6
+              int baseDelay = 10
+              for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+                try {
+                  checkout scm
+                  break
+                } catch (err) {
+                  if (attempt == maxAttempts) { throw err }
+                  int waitSec = baseDelay * (1 << (attempt - 1))
+                  echo "Checkout failed (attempt ${attempt}/${maxAttempts}). Waiting ${waitSec}s before retry..."
+                  sleep time: waitSec, unit: 'SECONDS'
+                }
+              }
+            }
+          }
+        }
+
+        stage('macos_aarch64_shared') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared' } }
+          }
+        }
+        stage('macos_aarch64_shared_crypto') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared 1' } }
+          }
+        }
+        stage('macos_aarch64_shared_crypto_no_boost') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared 7' } }
+          }
+        }
+        stage('macos_aarch64_shared_dsm') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared 2' } }
+          }
+        }
+        stage('macos_aarch64_shared_sqlite') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared 3' } }
+          }
+        }
+        stage('macos_aarch64_shared_errors_v1') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared 4' } }
+          }
+        }
+        stage('macos_aarch64_shared_fmt') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared 5' } }
+          }
+        }
+        stage('macos_aarch64_shared_libevent') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared 6' } }
+          }
+        }
+        stage('macos_aarch64_static') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static' } }
+          }
+        }
+        stage('macos_aarch64_static_crypto') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static 1' } }
+          }
+        }
+        stage('macos_aarch64_static_crypto_no_boost') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static 7' } }
+          }
+        }
+        stage('macos_aarch64_static_dsm') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static 2' } }
+          }
+        }
+        stage('macos_aarch64_static_sqlite') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static 3' } }
+          }
+        }
+        stage('macos_aarch64_static_errors_v1') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static 4' } }
+          }
+        }
+        stage('macos_aarch64_static_fmt') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static 5' } }
+          }
+        }
+        stage('macos_aarch64_static_libevent') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static 6' } }
+          }
+        }
+      }
+    }
+
+    stage('macOS x86_64') {
+      agent any
+      stages {
+        stage('Checkout') {
+          steps {
+            script {
+              int maxAttempts = 6
+              int baseDelay = 10
+              for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+                try {
+                  checkout scm
+                  break
+                } catch (err) {
+                  if (attempt == maxAttempts) { throw err }
+                  int waitSec = baseDelay * (1 << (attempt - 1))
+                  echo "Checkout failed (attempt ${attempt}/${maxAttempts}). Waiting ${waitSec}s before retry..."
+                  sleep time: waitSec, unit: 'SECONDS'
+                }
+              }
+            }
+          }
+        }
+
+        stage('macos_x86_64_shared') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared "" x86_64' } }
+          }
+        }
+        stage('macos_x86_64_shared_crypto') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared 1 x86_64' } }
+          }
+        }
+        stage('macos_x86_64_shared_crypto_no_boost') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared 7 x86_64' } }
+          }
+        }
+        stage('macos_x86_64_shared_dsm') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared 2 x86_64' } }
+          }
+        }
+        stage('macos_x86_64_shared_sqlite') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared 3 x86_64' } }
+          }
+        }
+        stage('macos_x86_64_shared_errors_v1') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared 4 x86_64' } }
+          }
+        }
+        stage('macos_x86_64_shared_fmt') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared 5 x86_64' } }
+          }
+        }
+        stage('macos_x86_64_shared_libevent') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared 6 x86_64' } }
+          }
+        }
+        stage('macos_x86_64_static') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static "" x86_64' } }
+          }
+        }
+        stage('macos_x86_64_static_crypto') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static 1 x86_64' } }
+          }
+        }
+        stage('macos_x86_64_static_crypto_no_boost') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static 7 x86_64' } }
+          }
+        }
+        stage('macos_x86_64_static_dsm') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static 2 x86_64' } }
+          }
+        }
+        stage('macos_x86_64_static_sqlite') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static 3 x86_64' } }
+          }
+        }
+        stage('macos_x86_64_static_errors_v1') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static 4 x86_64' } }
+          }
+        }
+        stage('macos_x86_64_static_fmt') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static 5 x86_64' } }
+          }
+        }
+        stage('macos_x86_64_static_libevent') {
+          steps {
+            script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh static 6 x86_64' } }
+          }
+        }
+      }
+    }
+  }
+}
+
+def retryWithBackoff(int maxAttempts, int baseDelaySeconds, Closure body) {
+  for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      body()
+      return
+    } catch (err) {
+      if (attempt == maxAttempts) { throw err }
+      int waitSec = baseDelaySeconds * (1 << (attempt - 1))
+      echo "Step failed (attempt ${attempt}/${maxAttempts}). Waiting ${waitSec}s before retry..."
+      sleep time: waitSec, unit: 'SECONDS'
+    }
+  }
+}
+

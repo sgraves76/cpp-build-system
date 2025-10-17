@@ -1,0 +1,27 @@
+if(PROJECT_ENABLE_LIBJPEG_TURBO)
+  if(PROJECT_BUILD)
+    add_definitions(-DPROJECT_ENABLE_LIBJPEG_TURBO)
+
+    find_package(JPEG ${LIBJPEG_TURBO_VERSION} REQUIRED)
+
+    include_directories(${JPEG_INCLUDE_DIRS})
+
+    link_libraries(JPEG::JPEG)
+  elseif(NOT PROJECT_IS_MINGW)
+    ExternalProject_Add(libjpeg_turbo_project
+      PREFIX external
+      URL ${PROJECT_3RD_PARTY_DIR}/libjpeg_turbo-${LIBJPEG_TURBO_VERSION}.tar.gz
+      URL_HASH SHA256=${LIBJPEG_TURBO_HASH}
+      LIST_SEPARATOR |
+      CMAKE_ARGS ${PROJECT_EXTERNAL_CMAKE_FLAGS}
+        -DBUILD_SHARED_LIBS=${PROJECT_BUILD_SHARED_LIBS}
+        -DBUILD_STATIC_LIBS=ON
+        -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
+        -DENABLE_SHARED=${PROJECT_BUILD_SHARED_LIBS}
+        -DENABLE_STATIC=ON
+    )
+
+    list(APPEND PROJECT_DEPENDENCIES libjpeg_turbo_project)
+  endif()
+endif()
+

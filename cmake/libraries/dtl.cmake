@@ -1,0 +1,18 @@
+if(PROJECT_ENABLE_DTL)
+  if(PROJECT_BUILD)
+    add_definitions(-DPROJECT_ENABLE_DTL)
+  else()
+    ExternalProject_Add(dtl_project
+      PREFIX external
+      URL ${PROJECT_3RD_PARTY_DIR}/dtl-v${DTL_VERSION}.tar.gz
+      URL_HASH SHA256=d6dcc7834b4117b5c14456ea73b907d0e2bafa5058e3a06b2c504d53517438c5
+      LIST_SEPARATOR |
+      CMAKE_ARGS ${PROJECT_EXTERNAL_CMAKE_FLAGS}
+        -DBUILD_SHARED_LIBS=${PROJECT_BUILD_SHARED_LIBS}
+        -DBUILD_STATIC_LIBS=ON
+        -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
+    )
+
+    list(APPEND PROJECT_DEPENDENCIES dtl_project)
+  endif()
+endif()

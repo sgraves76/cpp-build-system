@@ -1,0 +1,14 @@
+*** src/netbios_session.c	2024-08-25 14:07:44.450846602 -0500
+--- src/netbios_session.c.new	2024-08-25 14:07:52.260802575 -0500
+***************
+*** 45,50 ****
+--- 45,53 ----
+  #ifdef HAVE_SYS_SOCKET_H
+  #include <sys/socket.h>
+  #endif
++ #ifndef _WIN32
++ #include <sys/select.h>
++ #endif
+  #include <fcntl.h>
+  #include <errno.h>
+  

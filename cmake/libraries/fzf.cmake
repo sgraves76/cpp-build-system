@@ -1,0 +1,3 @@
+if(PROJECT_ENABLE_FZF AND PROJECT_BUILD)
+  add_definitions(-DPROJECT_ENABLE_FZF)
+endif()

@@ -1,0 +1,19 @@
+*** src/netbios_session.c	2024-08-25 15:41:23.313857494 -0500
+--- src/netbios_session.c.new	2024-08-25 16:48:20.721356125 -0500
+*************** static int open_socket_and_connect(netbi
+*** 126,132 ****
+  
+              if (FD_ISSET(s->socket, &write_fds))
+              {
+!                 if (getsockopt(s->socket, SOL_SOCKET, SO_ERROR, &ret,
+                                 &(socklen_t){ sizeof (ret) }) || ret)
+                  {
+                      errno = ret;
+--- 126,132 ----
+  
+              if (FD_ISSET(s->socket, &write_fds))
+              {
+!                 if (getsockopt(s->socket, SOL_SOCKET, SO_ERROR, (char*)&ret,
+                                 &(socklen_t){ sizeof (ret) }) || ret)
+                  {
+                      errno = ret;

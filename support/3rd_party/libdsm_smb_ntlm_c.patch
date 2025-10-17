@@ -1,0 +1,17 @@
+*** src/smb_ntlm.c	2024-08-25 14:09:43.423507167 -0500
+--- src/smb_ntlm.c.new	2024-08-25 15:28:31.976894610 -0500
+*************** uint64_t    smb_ntlm_generate_challenge(
+*** 80,86 ****
+--- 80,91 ----
+      }
+  #else
+      unsigned int number;
++ #ifdef rand_s
+      rand_s( &number );
++ #else
++     srand( (unsigned)time( NULL ) );  
++     number = rand();
++ #endif
+      return number;
+  #endif
+  }

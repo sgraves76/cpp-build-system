@@ -1,0 +1,23 @@
+*** source/gui/filebox.cpp	2020-05-16 17:08:50.000000000 -0500
+--- source/gui/filebox.cpp.new	2024-08-25 19:15:31.242397483 -0500
+***************
+*** 20,28 ****
+  #	include <windows.h>
+  #	include "../detail/mswin/platform_spec.hpp"
+  #	ifndef NANA_MINGW	//<Shobjidl.h> isn't supported well on MinGW
+! #		include <Shobjidl.h>
+  #	else
+! #		include <Shlobj.h>
+  #	endif
+  #elif defined(NANA_POSIX)
+  #	include <nana/gui/widgets/label.hpp>
+--- 20,28 ----
+  #	include <windows.h>
+  #	include "../detail/mswin/platform_spec.hpp"
+  #	ifndef NANA_MINGW	//<Shobjidl.h> isn't supported well on MinGW
+! #		include <shobjidl.h>
+  #	else
+! #		include <shlobj.h>
+  #	endif
+  #elif defined(NANA_POSIX)
+  #	include <nana/gui/widgets/label.hpp>

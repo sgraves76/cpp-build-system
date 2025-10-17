@@ -1,0 +1,13 @@
+.cache/
+.vs/
+build*/
+compile_commands.json
+cspell.json
+deps/
+dist/
+override.sh
+scripts/cleanup.cmd
+scripts/cleanup.sh
+support/Dockerfile
+version.cpp
+version.rc

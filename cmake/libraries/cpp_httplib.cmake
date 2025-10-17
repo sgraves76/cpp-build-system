@@ -1,0 +1,36 @@
+if(PROJECT_ENABLE_CPP_HTTPLIB)
+  if(PROJECT_BUILD)
+    add_definitions(
+      -DCPPHTTPLIB_OPENSSL_SUPPORT
+      -DCPPHTTPLIB_TCP_NODELAY=true
+      -DCPPHTTPLIB_ZLIB_SUPPORT
+      -DPROJECT_ENABLE_CPP_HTTPLIB
+    )
+  elseif(NOT PROJECT_IS_MINGW OR CMAKE_HOST_WIN32)
+    ExternalProject_Add(cpphttplib_project
+      PREFIX external
+      URL ${PROJECT_3RD_PARTY_DIR}/cpp-httplib-${CPP_HTTPLIB_VERSION}.tar.gz
+      URL_HASH SHA256=${CPP_HTTPLIB_HASH}
+      LIST_SEPARATOR |
+      CMAKE_ARGS ${PROJECT_EXTERNAL_CMAKE_FLAGS}
+        -DBUILD_SHARED_LIBS=${PROJECT_BUILD_SHARED_LIBS}
+        -DBUILD_STATIC_LIBS=ON
+        -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
+        -DHTTPLIB_REQUIRE_BROTLI=OFF
+        -DHTTPLIB_REQUIRE_OPENSSL=ON
+        -DHTTPLIB_REQUIRE_ZLIB=ON
+        -DHTTPLIB_TEST=OFF
+        -DHTTPLIB_USE_BROTLI_IF_AVAILABLE=OFF
+        -DHTTPLIB_USE_OPENSSL_IF_AVAILABLE=ON
+        -DHTTPLIB_USE_ZLIB_IF_AVAILABLE=ON
+        -DOPENSSL_USE_STATIC_LIBS=${OPENSSL_USE_STATIC_LIBS}
+    )
+
+    list(APPEND PROJECT_DEPENDENCIES cpphttplib_project)
+
+    add_dependencies(cpphttplib_project curl_project)
+    if (NOT CMAKE_HOST_WIN32)
+      add_dependencies(cpphttplib_project openssl_project)
+    endif()
+  endif()
+endif()

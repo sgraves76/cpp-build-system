@@ -1,0 +1,192 @@
+cmake_minimum_required(VERSION 3.27)
+
+cmake_policy(SET CMP0135 NEW)
+cmake_policy(SET CMP0144 NEW)
+
+if (NOT PROJECT_INTERFACE) 
+  message(FATAL_ERROR "Project must be compiled via 'make_win32.cmd'/'make_win32.sh' or 'make_unix.sh' build scripts. Invoking 'cmake' directly is not supported.")
+endif()
+
+project(${PROJECT_NAME}
+  DESCRIPTION ${PROJECT_DESC}
+  HOMEPAGE_URL ${PROJECT_URL}
+  VERSION ${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION}.${PROJECT_REVISION_VERSION}
+)
+
+include(CheckIncludeFileCXX)
+include(CheckIncludeFiles)
+include(ExternalProject)
+
+check_include_files(sys/xattr.h HAS_SETXATTR)
+if(HAS_SETXATTR)
+  add_definitions(-DHAS_SETXATTR)
+endif()
+
+include(cmake/hashes.cmake)
+
+include(cmake/versions.cmake)
+include(cmake/arch.cmake)
+include(cmake/os.cmake)
+include(cmake/options.cmake)
+
+option(PROJECT_REQUIRE_ALPINE "Require Alpine Linux as build system" OFF)
+option(PROJECT_STATIC_LINK "Static link executables" OFF)
+
+if(PROJECT_STATIC_LINK)
+  add_definitions(-DPROJECT_STATIC_LINK)
+endif()
+
+if(PROJECT_IS_MINGW)
+  add_definitions(-DPROJECT_IS_MINGW)
+  if(PROJECT_IS_MINGW_UNIX)
+    add_definitions(-DPROJECT_IS_MINGW_UNIX)
+  endif()
+endif()
+
+if(PROJECT_REQUIRE_ALPINE)
+  add_definitions(-DPROJECT_REQUIRE_ALPINE)
+endif()
+
+if(PROJECT_IS_ARM64)
+  add_definitions(-DPROJECT_IS_ARM64)
+endif()
+
+if(PROJECT_IS_DARWIN)
+  add_definitions(-DPROJECT_IS_DARWIN)
+endif()
+
+if(PROJECT_IS_MINGW)
+  option(PROJECT_ENABLE_WIN32_LONG_PATH_NAMES "Enable path sizes of 32767 characters on Windows" OFF)
+  if(PROJECT_ENABLE_WIN32_LONG_PATH_NAMES)
+    add_definitions(-DPROJECT_ENABLE_WIN32_LONG_PATH_NAMES)
+  endif()
+endif()
+
+if (PROJECT_ENABLE_V2_ERRORS)
+  add_definitions(-DPROJECT_ENABLE_V2_ERRORS)
+endif()
+
+include(cmake/settings.cmake)
+
+include(cmake/flags.cmake)
+include(cmake/functions.cmake)
+
+include(cmake/libraries.cmake)
+
+if(PROJECT_BUILD)
+  file(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}/version.cpp "")
+
+  if (PROJECT_IS_MINGW)
+    set(PROJECT_WINDOWS_VERSION_RC ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}/version.rc)
+    file(WRITE ${PROJECT_WINDOWS_VERSION_RC} "")
+  endif()
+
+  file(GLOB_RECURSE ADDITIONAL_SOURCES 
+    ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}/version.cpp
+    ${PROJECT_SUPPORT_DIR}/src/*.c
+    ${PROJECT_SUPPORT_DIR}/src/*.cpp
+  )
+
+  list(APPEND PROJECT_ADDITIONAL_SOURCES
+    ${ADDITIONAL_SOURCES}
+  )
+
+  include(project.cmake)
+
+  string(REPLACE "\\<" "<" PROJECT_COMPANY_NAME "${PROJECT_COMPANY_NAME}")
+  string(REPLACE "\\<" "<" PROJECT_COPYRIGHT "${PROJECT_COPYRIGHT}")
+  string(REPLACE "\\<" "<" PROJECT_DESC "${PROJECT_DESC}")
+  string(REPLACE "\\>" ">" PROJECT_COMPANY_NAME "${PROJECT_COMPANY_NAME}")
+  string(REPLACE "\\>" ">" PROJECT_COPYRIGHT "${PROJECT_COPYRIGHT}")
+  string(REPLACE "\\>" ">" PROJECT_DESC "${PROJECT_DESC}")
+
+  if (PROJECT_IS_MINGW)
+    if ("${PROJECT_RELEASE_ITER}" STREQUAL "release")
+      set(PROJECT_PRERELEASE 0)
+    else()
+      set(PROJECT_PRERELEASE VS_FF_PRERELEASE)
+    endif()
+
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}/version.rc.in 
+      ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}/version.rc
+      @ONLY
+    )
+  endif()
+
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}/version.cpp.in 
+    ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}/version.cpp
+    @ONLY
+  )
+
+  if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}/${PROJECT_NAME}.iss.in")
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}/${PROJECT_NAME}.iss.in 
+      ${PROJECT_DIST_DIR}/../${PROJECT_NAME}.iss
+      @ONLY
+    )
+  endif()
+
+  find_package(ICU REQUIRED COMPONENTS data i18n io uc)
+else()
+  message(STATUS "-=[CMake Settings]=-")
+  message(STATUS "  C standard: ${CMAKE_C_STANDARD}")
+  message(STATUS "  C++ standard: ${CMAKE_CXX_STANDARD}")
+  message(STATUS "  CPU architecture: ${PROJECT_MARCH}")
+if(PROJECT_ENABLE_FUSE)
+  message(STATUS "  FUSE version: ${PROJECT_FUSE}")
+endif()
+
+  string(REPLACE "<" "\\<" PROJECT_COMPANY_NAME "${PROJECT_COMPANY_NAME}")
+  string(REPLACE "<" "\\<" PROJECT_COPYRIGHT "${PROJECT_COPYRIGHT}")
+  string(REPLACE "<" "\\<" PROJECT_DESC "${PROJECT_DESC}")
+  string(REPLACE ">" "\\>" PROJECT_COMPANY_NAME "${PROJECT_COMPANY_NAME}")
+  string(REPLACE ">" "\\>" PROJECT_COPYRIGHT "${PROJECT_COPYRIGHT}")
+  string(REPLACE ">" "\\>" PROJECT_DESC "${PROJECT_DESC}")
+
+  add_custom_target(project ALL
+    DEPENDS ${PROJECT_DEPENDENCIES}
+    COMMAND cd build && cmake
+      ${CMAKE_CURRENT_SOURCE_DIR}
+      -DCMAKE_GENERATOR=${CMAKE_GENERATOR}
+      -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
+      -DPROJECT_3RD_PARTY_DIR=${PROJECT_3RD_PARTY_DIR}
+      -DPROJECT_BUILD=ON
+      -DPROJECT_BUILD_ARCH=${PROJECT_BUILD_ARCH}
+      -DPROJECT_BUILD_DIR=${PROJECT_BUILD_DIR}
+      -DPROJECT_BUILD_SHARED_LIBS=${PROJECT_BUILD_SHARED_LIBS}
+      -DPROJECT_CMAKE_BUILD_TYPE=${PROJECT_CMAKE_BUILD_TYPE}
+      -DPROJECT_COMPANY_NAME=${PROJECT_COMPANY_NAME}
+      -DPROJECT_COPYRIGHT=${PROJECT_COPYRIGHT}
+      -DPROJECT_DESC=${PROJECT_DESC}
+      -DPROJECT_DIST_DIR=${PROJECT_DIST_DIR}
+      -DPROJECT_ENABLE_V2_ERRORS=${PROJECT_ENABLE_V2_ERRORS}
+      -DPROJECT_ENABLE_WIN32_LONG_PATH_NAMES=${PROJECT_ENABLE_WIN32_LONG_PATH_NAMES}
+%PROJECT_ENABLE%
+      -DPROJECT_EXTERNAL_BUILD_ROOT=${PROJECT_EXTERNAL_BUILD_ROOT}
+      -DPROJECT_FUSE=${PROJECT_FUSE}
+      -DPROJECT_FUSE_INCLUDE_DIRS=${PROJECT_FUSE_INCLUDE_DIRS}
+      -DPROJECT_GIT_REV=${PROJECT_GIT_REV}
+      -DPROJECT_INTERFACE=1
+      -DPROJECT_IS_ALPINE=${PROJECT_IS_ALPINE}
+      -DPROJECT_IS_ARM64=${PROJECT_IS_ARM64}
+      -DPROJECT_IS_DARWIN=${PROJECT_IS_DARWIN}
+      -DPROJECT_IS_MINGW=${PROJECT_IS_MINGW}
+      -DPROJECT_IS_MINGW_UNIX=${PROJECT_IS_MINGW_UNIX}
+      -DPROJECT_MAJOR_VERSION=${PROJECT_MAJOR_VERSION}
+      -DPROJECT_MACOS_BUNDLE_ID=${PROJECT_MACOS_BUNDLE_ID}
+      -DPROJECT_MACOS_ICNS_NAME=${PROJECT_MACOS_ICNS_NAME}
+      -DPROJECT_MINOR_VERSION=${PROJECT_MINOR_VERSION}
+      -DPROJECT_NAME=${PROJECT_NAME}
+      -DPROJECT_RELEASE_ITER=${PROJECT_RELEASE_ITER}
+      -DPROJECT_RELEASE_NUM=${PROJECT_RELEASE_NUM}
+      -DPROJECT_REQUIRE_ALPINE=${PROJECT_REQUIRE_ALPINE}
+      -DPROJECT_REVISION_VERSION=${PROJECT_REVISION_VERSION}
+      -DPROJECT_STATIC_LINK=${PROJECT_STATIC_LINK}
+      -DPROJECT_SUPPORT_DIR=${PROJECT_SUPPORT_DIR}
+      -DPROJECT_TOOLCHAIN_FILE_CMAKE=${PROJECT_TOOLCHAIN_FILE_CMAKE}
+      -DPROJECT_TOOLCHAIN_FILE_MESON=${PROJECT_TOOLCHAIN_FILE_MESON}
+      -DPROJECT_URL=${PROJECT_URL}
+  )
+endif()
