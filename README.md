@@ -141,7 +141,7 @@ Use the provided build wrappers — they take two arguments:
 ./scripts/make_win32.cmd x86_64 Debug
 ```
 
-> `make_unix.sh` automatically builds inside **Alpine containers** for reproducible static binaries using **musl-libc**.  
+> `make_unix.sh` automatically builds inside **Alpine containers** for reproducible static binaries using **musl-libc** unless `PROJECT_STATIC_LINK=OFF`.  
 > `make_win32.*` supports both **MinGW64 cross-builds** (mostly static) and **MSYS2** builds (dynamic fallback).
 
 ---
