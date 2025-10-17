@@ -101,15 +101,6 @@ Owns your project’s **CMake build graph** — defining what gets built and how
 - **Install/export:** Define `install()` rules, export targets, generate package metadata
 - **Conditionals:** Wrap optional targets behind `PROJECT_ENABLE_*` feature flags
 
-Default `project.cmake`:
-```cmake
-add_project_library(lib${PROJECT_NAME} "" "" "${PROJECT_ADDITIONAL_SOURCES}")
-
-add_project_executable(${PROJECT_NAME} lib${PROJECT_NAME} lib${PROJECT_NAME})
-
-add_project_test_executable(${PROJECT_NAME}_test lib${PROJECT_NAME} lib${PROJECT_NAME})
-```
-
 Together, `config.sh` (identity & features) and `project.cmake` (targets & wiring) define a complete, reproducible build configuration across all platforms.
 
 ---
@@ -145,3 +136,134 @@ Use the provided build wrappers — they take two arguments:
 > `make_win32.*` supports both **MinGW64 cross-builds** (mostly static) and **MSYS2** builds (dynamic fallback).
 
 ---
+
+## 🧹 Package Cleanup & Restore
+
+- **Automatic cleanup on first compile:**  
+  After you configure `config.sh` and run your **first successful build**, the project’s `cleanup.sh` will run to **remove any packages you set to `OFF`**. This reduces dependency bloat to exactly what your project needs.
+
+- **Manual cleanup (optional):**  
+  You can also run cleanup manually at any time from your project directory:  
+  ```bash
+  ./scripts/cleanup.sh
+  ```
+
+- **Restoring removed packages:**  
+  If you later want to **add back packages** you previously turned off (and which `cleanup.sh` removed), run the **template’s** update script from the `cpp-build-system` repository root, pointing it at your project path:  
+  ```bash
+  # from the cpp-build-system repo root
+  ./update_project.sh ~/dev/MyApp
+  ```
+  This will **restore all template-managed packages and scripts** (including `cleanup.sh`) into your project so you can re-enable dependencies via `config.sh` and rebuild.
+
+---
+
+## 🧱 Linking Strategy
+
+| Target | Linking Model | Build Environment | Notes |
+|---------|----------------|------------------|-------|
+| **Linux (musl)** | Fully static | Alpine | No shared libs — single binary |
+| **Linux (MinGW64)** | Static as possible | Alpine | Only core Win32 runtime dynamically linked |
+| **Windows (MSYS2)** | Dynamic | MSYS2 | Fallback/test build |
+| **macOS** | Dynamic | Static as possible | Standard Apple toolchain behavior |
+
+> 💡 *Goal: portable, reproducible, single-binary builds across platforms.*
+
+---
+
+Default `project.cmake`:
+```cmake
+add_project_library(lib${PROJECT_NAME} "" "" "${PROJECT_ADDITIONAL_SOURCES}")
+
+add_project_executable(${PROJECT_NAME} lib${PROJECT_NAME} lib${PROJECT_NAME})
+
+add_project_test_executable(${PROJECT_NAME}_test lib${PROJECT_NAME} lib${PROJECT_NAME})
+```
+
+Default `config.sh`:
+```bash
+#!/usr/bin/env bash
+
+PROJECT_NAME="test"
+
+PROJECT_COMPANY_NAME=""
+PROJECT_COPYRIGHT=""
+PROJECT_DESC=""
+PROJECT_URL=""
+
+PROJECT_MACOS_BUNDLE_ID="com.test.${PROJECT_NAME}"
+PROJECT_MACOS_ICNS_NAME=""
+
+PROJECT_MAJOR_VERSION=0
+PROJECT_MINOR_VERSION=0
+PROJECT_REVISION_VERSION=1
+PROJECT_RELEASE_NUM=0
+PROJECT_RELEASE_ITER=alpha
+
+PROJECT_APP_LIST=(${PROJECT_NAME})
+
+PROJECT_PRIVATE_KEY=${DEVELOPER_PRIVATE_KEY}
+PROJECT_PUBLIC_KEY=${DEVELOPER_PUBLIC_KEY}
+
+PROJECT_STATIC_LINK=ON
+
+PROJECT_MINGW64_COPY_DEPENDENCIES+=()
+PROJECT_MSYS2_PACKAGE_LIST+=()
+
+PROJECT_ENABLE_V2_ERRORS=ON
+PROJECT_ENABLE_WIN32_LONG_PATH_NAMES=OFF
+
+PROJECT_ENABLE_BACKWARD_CPP=OFF
+PROJECT_ENABLE_BOOST=OFF
+PROJECT_ENABLE_CLI11=OFF
+PROJECT_ENABLE_CPP_HTTPLIB=OFF
+PROJECT_ENABLE_CURL=OFF
+PROJECT_ENABLE_CXXOPTS=OFF
+PROJECT_ENABLE_DTL=OFF
+PROJECT_ENABLE_FLAC=OFF
+PROJECT_ENABLE_FMT=OFF
+PROJECT_ENABLE_FONTCONFIG=OFF
+PROJECT_ENABLE_FREETYPE2=OFF
+PROJECT_ENABLE_FUSE=OFF
+PROJECT_ENABLE_FZF=OFF
+PROJECT_ENABLE_GTKMM=OFF
+PROJECT_ENABLE_JSON=OFF
+PROJECT_ENABLE_LIBBITCOIN_SYSTEM=OFF
+PROJECT_ENABLE_LIBDSM=OFF
+PROJECT_ENABLE_LIBEVENT=OFF
+PROJECT_ENABLE_LIBICONV=OFF
+PROJECT_ENABLE_LIBJPEG_TURBO=OFF
+PROJECT_ENABLE_LIBPNG=OFF
+PROJECT_ENABLE_LIBSODIUM=OFF
+PROJECT_ENABLE_LIBTASN=OFF
+PROJECT_ENABLE_NANA=OFF
+PROJECT_ENABLE_NUSPELL=OFF
+PROJECT_ENABLE_OGG=OFF
+PROJECT_ENABLE_OPENAL=OFF
+PROJECT_ENABLE_OPENSSL=OFF
+PROJECT_ENABLE_PUGIXML=OFF
+PROJECT_ENABLE_ROCKSDB=OFF
+PROJECT_ENABLE_SAGO_PLATFORM_FOLDERS=OFF
+PROJECT_ENABLE_SDL=OFF
+PROJECT_ENABLE_SECP256K1=OFF
+PROJECT_ENABLE_SFML=OFF
+PROJECT_ENABLE_SPDLOG=OFF
+PROJECT_ENABLE_SQLITE=OFF
+PROJECT_ENABLE_STDUUID=OFF
+PROJECT_ENABLE_TESTING=ON
+PROJECT_ENABLE_TPL=OFF
+PROJECT_ENABLE_VLC=OFF
+PROJECT_ENABLE_VORBIS=OFF
+PROJECT_ENABLE_WINFSP=OFF
+PROJECT_ENABLE_WXWIDGETS=OFF
+
+PROJECT_KEEP_BACKWARD_CPP=1
+
+if [ "${PROJECT_ENABLE_TESTING}" == "ON" ]; then
+  PROJECT_APP_LIST+=(${PROJECT_NAME}_test)
+fi
+
+if [ -f "./override.sh" ]; then
+  . ./override.sh
+fi
+```
