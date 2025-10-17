@@ -121,8 +121,9 @@ Use the provided build wrappers — they take two arguments:
 <arch> <config>
 ```
 
-> Default \<arch> is `x86_64` if not specified
-> Default \<configuration> is `RelWithDebInfo` if not specified
+> Default \<arch\> is `x86_64` if not specified
+
+> Default \<configuration\> is `RelWithDebInfo` if not specified
 
 #### 🐧 Unix/Linux/macOS (via Alpine containers)
 ```bash
