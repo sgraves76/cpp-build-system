@@ -165,7 +165,7 @@ Use the provided build wrappers — they take two arguments:
 | **Linux (musl)** | Fully static | Alpine | No shared libs — single binary |
 | **Linux (MinGW64)** | Static as possible | Alpine | Only core Win32 runtime dynamically linked |
 | **Windows (MSYS2)** | Dynamic | MSYS2 | Fallback/test build |
-| **macOS** | Dynamic | Static as possible | Standard Apple toolchain behavior |
+| **macOS** | Static as possible | Native | Standard Apple toolchain behavior |
 
 > 💡 *Goal: portable, reproducible, single-binary builds across platforms.*
 
