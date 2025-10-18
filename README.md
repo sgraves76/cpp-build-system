@@ -13,17 +13,22 @@ All builds are orchestrated through project scripts — **direct CMake invocatio
 
 ---
 
-## ✨ Features
+### ✨ Features
 
-- 🧱 **Static Linux builds** using **musl-libc** inside **Alpine containers**
-- 🪟 **MinGW64 cross-builds** from Alpine (static except core Win32 runtime)
-- 🧩 **MSYS2 builds** as fallback or for testing
-- 🐳 **Alpine-based Docker environments** for reproducible builds
-- 🤖 **Single Jenkins pipeline** orchestrating Win64 + Linux x64 + Linux aarch64
-- 🤖 **Single Jenkins pipeline** orchestrating macOS x86-64 + macOS aarch64
-- 💠 **Flutter embedding support** for modern native UIs
-- 🧰 **Root-level project generator** (`create_project.sh` / `.cmd`)
-- 🧼 Ready for `clang-format`, `clang-tidy`, and CI automation
+- **Cross-Platform Build Targets**
+  - 🧱 **Linux (musl-libc)** — fully static binaries built inside **Alpine containers**
+  - 🪟 **Windows (MinGW64)** — cross-compiled from Alpine, mostly static except core Win32 runtime
+  - 🧩 **Windows (MSYS2)** — native dynamic builds for testing or fallback
+  - 🍎 **macOS** — native x86-64 and arm64 builds
+
+- **Build & Automation**
+  - 🐳 **Alpine-based Docker environments** ensure fully reproducible builds  
+  - 🤖 **Unified Jenkins pipelines** for Linux, Windows, and macOS targets  
+  - 🧰 **Root-level project generator** (`create_project.sh` / `.cmd`) for instant scaffolding  
+
+- **Development & Integration**
+  - 💠 Optional **Flutter embedding** for hybrid C++/Flutter UIs  
+  - 🧼 Integrated with **clangd**, **clang-format**, and **clang-tidy** for modern IDEs and CI  
 
 ---
 
@@ -55,7 +60,6 @@ This creates:
 The new directory contains:
 - A preconfigured cross-platform C++ project structure  
 - A `scripts/` folder for building and packaging  
-- Default toolchains, configs, and dependency layout  
 
 > 🧩 After creation, you'll work entirely within your new project — **cpp-build-system** remains the master template.
 
@@ -95,11 +99,8 @@ Defines your project’s **identity, features, and build behavior**:
 Owns your project’s **CMake build graph** — defining what gets built and how:
 
 - **Targets:** Add **executables** and **libraries** (static/shared as needed)
-- **Sources & includes:** Declare source lists, include paths, compiler flags, and definitions
-- **Linkage:** Link enabled third-party dependencies (toggled in `config.sh`)
-- **Config & resources:** Install or bundle configuration files and runtime assets
-- **Install/export:** Define `install()` rules, export targets, generate package metadata
-- **Conditionals:** Wrap optional targets behind `PROJECT_ENABLE_*` feature flags
+- **Sources & includes:** Declare additional source lists and include paths
+- **Config & resources:** Bundle configuration files and runtime assets
 
 Together, `config.sh` (identity & features) and `project.cmake` (targets & wiring) define a complete, reproducible build configuration across all platforms.
 
