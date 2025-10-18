@@ -48,8 +48,8 @@ pipeline {
         stage('test') {
           steps {
             script {
-              retryWithBackoff(2, 5) { sh 'scripts/test.sh aarch64' }
-              retryWithBackoff(2, 5) { sh 'scripts/test.sh x86_64' }
+              retryWithBackoff(2, 5) { sh 'scripts/run_tests.sh aarch64' }
+              retryWithBackoff(2, 5) { sh 'scripts/run_tests.sh x86_64' }
             }
           }
         }

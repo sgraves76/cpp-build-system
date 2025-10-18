@@ -52,9 +52,9 @@ pipeline {
         stage('test') {
           steps {
             script {
-              retryWithBackoff(2, 5) { sh 'scripts/test.sh' }
-              retryWithBackoff(2, 5) { sh 'scripts/test.sh "" "" "" "" 1 1' }
-              retryWithBackoff(2, 5) { sh 'scripts/test.sh aarch64' }
+              retryWithBackoff(2, 5) { sh 'scripts/run_tests.sh' }
+              retryWithBackoff(2, 5) { sh 'scripts/run_tests.sh "" "" "" "" 1 1' }
+              retryWithBackoff(2, 5) { sh 'scripts/run_tests.sh aarch64' }
             }
           }
         }
