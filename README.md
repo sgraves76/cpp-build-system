@@ -204,7 +204,7 @@ PROJECT_URL=""
 
 PROJECT_MACOS_BUNDLE_ID="com.test.${PROJECT_NAME}"
 # IMPORTANT: File must be placed in assets/ folder (assets/icons.icns)
-# PROJECT_MACOS_ICNS_NAME="icons.ins"
+# PROJECT_MACOS_ICNS_NAME="icons.icns"
 PROJECT_MACOS_ICNS_NAME=""
 
 PROJECT_MAJOR_VERSION=0
