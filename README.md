@@ -29,6 +29,8 @@ All builds are orchestrated through project scripts — **direct CMake invocatio
 - **Development & Integration**
   - 💠 Optional **Flutter embedding** for hybrid C++/Flutter UIs  
   - 🧼 Integrated with **clangd**, **clang-format**, and **clang-tidy** for modern IDEs and CI  
+  - 🪟 **Inno Setup** integration for automated Windows installer generation
+
 
 ---
 

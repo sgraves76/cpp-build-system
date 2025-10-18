@@ -120,10 +120,18 @@ if(PROJECT_BUILD)
     @ONLY
   )
 
-  if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}/${PROJECT_NAME}.iss.in")
+  if (PROJECT_IS_MINGW AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}/${PROJECT_NAME}.iss.in")
     configure_file(
       ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}/${PROJECT_NAME}.iss.in 
       ${PROJECT_DIST_DIR}/../${PROJECT_NAME}.iss
+      @ONLY
+    )
+  endif()
+
+  if (PROJECT_IS_DARWIN AND EXISTS "${CMAKE_SOURCE_DIR}/${PROJECT_NAME}/Info.plist.in")
+    configure_file(
+      ${CMAKE_SOURCE_DIR}/${PROJECT_NAME}/Info.plist.in
+      ${CMAKE_SOURCE_DIR}/${PROJECT_NAME}/Info.plist
       @ONLY
     )
   endif()
