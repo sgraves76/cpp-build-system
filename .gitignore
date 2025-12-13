@@ -11,3 +11,10 @@ scripts/cleanup.sh
 support/Dockerfile
 version.cpp
 version.rc
+.DS_Store
+*.gz
+*.bz2
+*.xz
+*.zip
+*.msi
+*.exe

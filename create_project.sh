@@ -18,6 +18,7 @@ create_versions_cmake
 
 process_file .jenkins_builds
 process_file .jenkins_macos
+process_file .jenkins_msys2
 process_file .nvimrc
 process_file CMakeLists.txt
 process_file config.sh

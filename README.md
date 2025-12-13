@@ -36,12 +36,25 @@ All builds are orchestrated through project scripts — **direct CMake invocatio
 
 ## 🚀 Getting Started
 
-### 1️⃣ Clone the Build System
+### 1️⃣ Clone the Build System and Grab Packages
 ```bash
 git clone https://git.fifthgrid.com/sgraves/cpp-build-system.git
 git clone https://github.com/sgraves76/cpp-build-system.git
 cd cpp-build-system
 ```
+
+Run the root-level `grab_packages.sh`/`grab_packages.cmd`
+
+Example:
+```bash
+./grab_packages.sh
+```
+
+```cmd
+grab_packages.cmd
+```
+
+This will download and validate all packages currently supported by `cpp-build-system`. They will be placed within the `support/3rd_party/` folder.
 
 ---
 
@@ -52,11 +65,11 @@ Run the root-level `create_project.sh` with:
 
 Example:
 ```bash
-./create_project.sh MyApp ~/dev
+./create_project.sh MyApp ~/src
 ```
 This creates:
 ```
-~/dev/MyApp/
+~/src/MyApp/
 ```
 
 The new directory contains:
@@ -70,7 +83,7 @@ The new directory contains:
 
 ### 3️⃣ Configure the Project
 
-In your new project directory (`~/dev/MyApp/`), edit these two files before your first build:
+In your new project directory (`~/src/MyApp/`), edit these two files before your first build:
 
 > ⚠️ **Important Notice:**  
 > Do **not modify** the root `CMakeLists.txt` file in your project.  
@@ -155,7 +168,7 @@ Use the provided build wrappers — they take two arguments:
   If you later want to **add back packages** you previously turned off (and which `cleanup.sh` removed), run the **template’s** update script from the `cpp-build-system` repository root, pointing it at your project path:  
   ```bash
   # from the cpp-build-system repo root
-  ./update_project.sh ~/dev/MyApp
+  ./update_project.sh ~/src/MyApp
   ```
   This will **restore all template-managed packages and scripts** (including `cleanup.sh`) into your project so you can re-enable dependencies via `config.sh` and rebuild.
 

@@ -36,6 +36,12 @@ pipeline {
           }
         }
 
+        stage('clean_packages') {
+          steps { script { retryWithBackoff(2, 5) { sh 'clean_packages.sh' } } }
+        }
+        stage('grab_packages') {
+          steps { script { retryWithBackoff(2, 5) { sh 'grab_packages.sh' } } }
+        }
         stage('macos_aarch64_shared') {
           steps {
             script { retryWithBackoff(2, 5) { sh 'scripts/test_unix.sh shared' } }

@@ -14,6 +14,7 @@ PROJECT_MSYS2_PACKAGE_LIST+=(
   mingw64/mingw-w64-x86_64-diffutils
   mingw64/mingw-w64-x86_64-gcc
   mingw64/mingw-w64-x86_64-gdb
+  mingw64/mingw-w64-x86_64-git-lfs
   mingw64/mingw-w64-x86_64-icu
   mingw64/mingw-w64-x86_64-make
   mingw64/mingw-w64-x86_64-mesa

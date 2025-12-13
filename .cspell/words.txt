@@ -27,6 +27,7 @@ cstdint
 cxxflags
 cxxopts_project
 cxxstd
+cygpath
 d_largefile64_source
 d_largefile_source
 d_ndebug
@@ -160,6 +161,7 @@ msvc
 msvcr120
 msvcr90
 mswsock
+msys2
 mtune
 mwindows
 nana

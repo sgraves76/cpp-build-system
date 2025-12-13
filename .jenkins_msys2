@@ -1,0 +1,103 @@
+#!groovy
+pipeline {
+  agent none
+
+  environment {
+    PROJECT_TEST_CONFIG_DIR = "C:\\.ci\\cpp_build_system\\test"
+  }
+
+  options {
+    disableConcurrentBuilds()
+    skipDefaultCheckout()
+    timestamps()
+  }
+
+  stages {
+    stage('msys2 x86_64') {
+      agent any
+      stages {
+        stage('Checkout') {
+          steps {
+            script {
+              int maxAttempts = 6
+              int baseDelay = 10
+              for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+                try {
+                  checkout scm
+                  break
+                } catch (err) {
+                  if (attempt == maxAttempts) { throw err }
+                  int waitSec = baseDelay * (1 << (attempt - 1))
+                  echo "Checkout failed (attempt ${attempt}/${maxAttempts}). Waiting ${waitSec}s before retry..."
+                  sleep time: waitSec, unit: 'SECONDS'
+                }
+              }
+            }
+          }
+        }
+
+        stage('clean_packages') {
+          steps { script { retryWithBackoff(2, 5) { sh 'clean_packages.cmd' } } }
+        }
+        stage('grab_packages') {
+          steps { script { retryWithBackoff(2, 5) { sh 'grab_packages.cmd' } } }
+        }
+        stage('msys2_x86_64_shared') {
+          steps {
+            script { retryWithBackoff(2, 5) { bat 'scripts\\test_msys2.cmd shared "" x86_64' } }
+          }
+        }
+        stage('msys2_x86_64_shared_crypto') {
+          steps {
+            script { retryWithBackoff(2, 5) { bat 'scripts\\test_msys2.cmd shared 1 x86_64' } }
+          }
+        }
+        stage('msys2_x86_64_shared_crypto_no_boost') {
+          steps {
+            script { retryWithBackoff(2, 5) { bat 'scripts\\test_msys2.cmd shared 7 x86_64' } }
+          }
+        }
+        stage('msys2_x86_64_shared_dsm') {
+          steps {
+            script { retryWithBackoff(2, 5) { bat 'scripts\\test_msys2.cmd shared 2 x86_64' } }
+          }
+        }
+        stage('msys2_x86_64_shared_sqlite') {
+          steps {
+            script { retryWithBackoff(2, 5) { bat 'scripts\\test_msys2.cmd shared 3 x86_64' } }
+          }
+        }
+        stage('msys2_x86_64_shared_errors_v1') {
+          steps {
+            script { retryWithBackoff(2, 5) { bat 'scripts\\test_msys2.cmd shared 4 x86_64' } }
+          }
+        }
+        stage('msys2_x86_64_shared_fmt') {
+          steps {
+            script { retryWithBackoff(2, 5) { bat 'scripts\\test_msys2.cmd shared 5 x86_64' } }
+          }
+        }
+        stage('msys2_x86_64_shared_libevent') {
+          steps {
+            script { retryWithBackoff(2, 5) { bat 'scripts\\test_msys2.cmd shared 6 x86_64' } }
+          }
+        }
+      }
+    }
+  }
+}
+
+def retryWithBackoff(int maxAttempts, int baseDelaySeconds, Closure body) {
+  for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      body()
+      return
+    } catch (err) {
+      if (attempt == maxAttempts) { throw err }
+      int waitSec = baseDelaySeconds * (1 << (attempt - 1))
+      echo "Step failed (attempt ${attempt}/${maxAttempts}). Waiting ${waitSec}s before retry..."
+      sleep time: waitSec, unit: 'SECONDS'
+    }
+  }
+}
+

@@ -52,7 +52,7 @@ elif [ "${WITH_TYPE}" == "7" ]; then
 fi
 
 if [ "${BUILD_ARCH}" != "" ]; then
-  NAME=${NAME}_libevent_${BUILD_ARCH}
+  NAME=${NAME}_${BUILD_ARCH}
 fi
 
 rm -rf "${TEST_DIR}/${NAME}"
